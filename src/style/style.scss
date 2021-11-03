@@ -54,9 +54,13 @@ input::-webkit-inner-spin-button {
     position: relative;
     .bg-decoration {
         position: absolute;
-        right: -174px;
-        bottom: -70px;
+        right: 0;
+        bottom: -200px;
         z-index: -1;
+        @media(min-width: 768px) {
+            right: -174px;
+            bottom: -70px;
+        }
     }
 }
 

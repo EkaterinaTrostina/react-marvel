@@ -4,12 +4,21 @@
     &__content {
         margin-top: 50px;
         display: grid;
-        grid-template-columns: 650px 425px;
+        grid-template-columns: 100%;
         column-gap: 25px;
         align-items: start;
+
+        @media(min-width: 768px) {
+            grid-template-columns: 50% 50%;
+        }
+        @media(min-width:1200px) {
+            grid-template-columns: 650px 425px;
+        }
+        
     }
     &__grid {
         display: grid;
+        justify-content: center;
         grid-template-columns: repeat(3, 200px);
         column-gap: 25px;
         row-gap: 30px;
