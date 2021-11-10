@@ -43,11 +43,10 @@ const useMarverService = () => {
         return {
             id: comics.id,
             name: comics.title,
-            price: comics.prices[0].price,
+            price: comics.prices[0].price === 0 ? 'NOT AVAILABLE' : `${comics.prices[0].price}$`,
             thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
-            url: comics.urls[0].url,
             description: comics.description === null ? 'description of none' : comics.description,
-            pageCount: comics.pageCount,
+            pageCount: comics.pageCount === 0 ? 'Unknown count of' : comics.pageCount,
             language: comics.language ? comics.language : 'Unknown'
         }
     }

@@ -41,7 +41,6 @@ const ComicsList = (props) => {
 
     const renderComics = (arr) => {
         const comics = arr.map((item, i) => {
-            const price = item.price === 0 ? 'NOT AVAILABLE' : `${item.price}$`;
             return (
                 <li 
                 className="comics__item" 
@@ -49,7 +48,7 @@ const ComicsList = (props) => {
                     <Link to={`/comics/${item.id}`}>
                         <img src={item.thumbnail} alt={item.name} className="comics__item-img"/>
                         <div className="comics__item-name">{item.name}</div>
-                        <div className="comics__item-price">{price}</div>
+                        <div className="comics__item-price">{item.price}</div>
                     </Link>
                 </li>
             )
