@@ -17,6 +17,11 @@ const useMarverService = () => {
         return _transformCharacter(res.data.results[0]);
     }
 
+    const getCharacterByName = async (name) => {
+        const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+        return res.data.results.map(_transformCharacter);
+    }
+
     const getAllComics = async (offset) => {
         const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`);
         return res.data.results.map(_transformComics);
@@ -51,7 +56,7 @@ const useMarverService = () => {
         }
     }
 
-    return {loading, error, getAllCharacters, getCurrentCharacter, getAllComics, getCurrentComics, clearError};
+    return {loading, error, getAllCharacters, getCurrentCharacter, getAllComics, getCurrentComics, getCharacterByName, clearError};
 }
 
 export default useMarverService;
