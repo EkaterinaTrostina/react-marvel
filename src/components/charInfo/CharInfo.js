@@ -2,16 +2,14 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import './charInfo.scss';
-import thor from '../../resources/img/thor.jpeg';
+
 import useMarverService from '../../services/MarverService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Skeleton from '../skeleton/Skeleton';
+import setContent from '../../utils/setContent';
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
 
-    const {error, loading, getCurrentCharacter, clearError} =  useMarverService();
+    const {getCurrentCharacter, clearError, process, setProcess} =  useMarverService();
 
     useEffect(() => {
         updateChar();
@@ -27,6 +25,7 @@ const CharInfo = (props) => {
 
         getCurrentCharacter(charId)
             .then(onCharLoaded)
+            .then(() => setProcess('confirmed'))
             
     }
 
@@ -34,23 +33,16 @@ const CharInfo = (props) => {
         setChar(char);
     }
 
-    const skeleton =  char || loading || error ? null : <Skeleton/>
-    const errorMessage = error ? <ErrorMessage/> : null
-    const spinner = loading ? <Spinner/> : null
-    const content = !(loading || error || !char) ? <View char ={char}/> : null
 
     return (
         <div className="char__info">
-            {skeleton}
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(process, View, char)}
         </div>
     )
 }
 
-const View = ({char}) => {
-    const {name, description, thumbnail, homepage, wiki, comics} = char;
+const View = ({data}) => {
+    const {name, description, thumbnail, homepage, wiki, comics} = data;
 
     let clazz = 'char__basics';
 

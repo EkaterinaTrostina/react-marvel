@@ -8,7 +8,7 @@ import './charSearchForm.scss'
 
 const CustomForm = () => {
     const [char, setChar] = useState(null);
-    const {loading, error, getCharacterByName, clearError} = useMarverService();
+    const {getCharacterByName, clearError, process, setProcess} = useMarverService();
 
     const onCharLoaded = (char) => {
         setChar(char);
@@ -19,9 +19,10 @@ const CustomForm = () => {
 
         getCharacterByName(name)
             .then(onCharLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
-    const errorMessage = error ? <div className="char__search-critical-error"><ErrorMessage/></div> : null;
+    const errorMessage = process == 'error' ? <div className="char__search-critical-error"><ErrorMessage/></div> : null;
     const result = !char ? null : char.length > 0 ? 
         <div className='charSearchForm__success-wrap'> 
             <div className="charSearchForm__success"> There is! Visit {char[0].name} page?</div> 
@@ -68,7 +69,7 @@ const CustomForm = () => {
                 <button 
                     type="submit"
                     className="button button__main"
-                    disabled={loading}>
+                    disabled={process == 'loading'}>
                     <div className="inner">FIND</div>
                 </button>
                 {errors.name && touched.name ? <div className="charSearchForm__error"> {errors.name}</div> : null}

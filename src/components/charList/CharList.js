@@ -1,12 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { CSSTransition, TransitionGroup,} from 'react-transition-group';
 import PropTypes from 'prop-types';
 
 import './charList.scss';
-import abyss from '../../resources/img/abyss.jpg';
-import useMarverService from '../../services/MarverService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
+
+import useMarverService from '../../services/MarverService';
+
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner/>
+            break;
+        case 'loading': 
+            return newItemLoading ? <Component/> : <Spinner/>
+            break;
+        case 'error': 
+            return <ErrorMessage/>
+            break;  
+        case 'confirmed': 
+            return <Component/>
+            break;        
+        default:
+            throw new Error('unexpected process state');
+            break;
+    }
+}
 
 const CharList = (props) => {
 
@@ -15,7 +35,7 @@ const CharList = (props) => {
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const {error, loading, getAllCharacters} = useMarverService();
+    const {getAllCharacters, process, setProcess} = useMarverService();
 
     const renderChars = (arr) => {
         let char = false;
@@ -87,6 +107,7 @@ const CharList = (props) => {
 
         getAllCharacters(offset)
             .then(onCharsLoaded)
+            .then(() => setProcess('confirmed'))
     }
 
 
@@ -102,18 +123,13 @@ const CharList = (props) => {
         setCharEnded(charEnded => ended);
     }
 
-
-    const items = renderChars(chars);
-
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newItemLoading ? <Spinner/> : null;
+    const elements = useMemo(() => {
+        return setContent(process, ()=> renderChars(chars), newItemLoading)
+    }, [process])
 
     return (
         <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {items}
-
+            {elements}
             <button 
                 style={{'display' : charEnded ? 'none' : 'block', 'animation': newItemLoading ? 'load 1s ease-in-out infinite' : ''}}
                 className="button button__main button__long"

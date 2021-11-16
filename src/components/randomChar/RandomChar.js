@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
-
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import './randomChar.scss';
-import thor from '../../resources/img/thor.jpeg';
 import mjolnir from '../../resources/img/mjolnir.png';
+
 import useMarverService from '../../services/MarverService';
+import setContent from '../../utils/setContent';
 
 const RandomChar = () => {
     const [char, setChar] = useState({});
 
-    const {loading, error, getCurrentCharacter, clearError} = useMarverService();
+    const {loading, error, getCurrentCharacter, clearError, process, setProcess} = useMarverService();
 
     useEffect(() => {
         updateChar();
@@ -33,17 +31,13 @@ const RandomChar = () => {
 
         getCurrentCharacter(id)
             .then(onCharLoaded)
+            .then(() => setProcess('confirmed'))
     }
-    
-    const errorMessage = error ? <ErrorMessage/> : null
-    const spinner = loading ? <Spinner/> : null
-    const content = !(loading || error) ? <View char ={char}/> : null
+
 
     return (
         <div className="randomchar">
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(process, View, char)}
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br/>
@@ -63,8 +57,8 @@ const RandomChar = () => {
     )
 }
 
-const View = ({char}) => {
-    const {name, description, thumbnail, homepage, wiki} = char;
+const View = ({data}) => {
+    const {name, description, thumbnail, homepage, wiki} = data;
     const notDescr = "we don't have description for this character";
 
     let imgClassName = 'randomchar__img';

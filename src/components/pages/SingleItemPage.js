@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 
-import useMarverService from '../../services/MarverService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import AppBanner from "../appBanner/AppBanner";
+
+import useMarverService from '../../services/MarverService';
+import setContent from '../../utils/setContent';
+
 
 const SingleItemPage = ({Component, dataType}) => {
     const [item, setItem] = useState(null);
 
     const {id} = useParams();
 
-    const {getCurrentComics, getCurrentCharacter, loading, error, clearError} = useMarverService();
+    const {getCurrentComics, getCurrentCharacter, clearError, process, setProcess} = useMarverService();
 
     const onItemLoaded = (item) => {
         setItem(item)
@@ -26,23 +27,17 @@ const SingleItemPage = ({Component, dataType}) => {
 
         switch (dataType) {
             case 'comic':
-                getCurrentComics(id).then(onItemLoaded);
+                getCurrentComics(id).then(onItemLoaded).then(() => setProcess('confirmed'));
                 break;
             case 'character':
-                getCurrentCharacter(id).then(onItemLoaded);
+                getCurrentCharacter(id).then(onItemLoaded).then(() => setProcess('confirmed'));
         }
     }
-
-    const errorMessage = error ? <ErrorMessage/> : null
-    const spinner = loading ? <Spinner/> : null
-    const content = !(loading || error || !item) ? <Component data ={item}/> : null
 
     return (
         <>
             <AppBanner/>
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(process, Component, item)}
         </>
         
 
